@@ -1,0 +1,118 @@
+<!-- Logback configuration. See http://logback.qos.ch/manual/index.html -->
+<configuration scan="true" scanPeriod="10 seconds">
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+
+    <property name="CONSOLE_LOG_PATTERN" value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+    <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+
+    <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}kapac-configuration.log}"/>
+    <appender name="DEBUG_LEVEL_REMAPPER" class="org.springframework.boot.logging.logback.LevelRemappingAppender">
+        <destinationLogger>org.springframework.boot</destinationLogger>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>100MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+    <logger name="com.yck.payment.dao" level="debug"/>
+    
+     <!-- 日志规范 start-->
+    <appender name="INNERSERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <!--日志文件输出的文件名-->
+          <FileNamePattern>logs/inner-service.%d{yyyy-MM-dd}.log</FileNamePattern>
+          <MaxHistory>30</MaxHistory>
+      </rollingPolicy>
+      <encoder
+              class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+          <!-- 日志输出编码 -->
+          <layout class="ch.qos.logback.classic.PatternLayout">
+              <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+              <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n
+              </pattern>
+          </layout>
+      </encoder>
+      <!--日志文件最大的大小-->
+      <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+          <MaxFileSize>100MB</MaxFileSize>
+      </triggeringPolicy>
+    </appender>
+    
+     <logger name="com.yck.payment.common.log.InnerService" level="info">
+     	
+        <appender-ref ref="INNERSERVICE"/>
+    </logger>  
+    
+     <appender name="REMOTESERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名-->
+            <FileNamePattern>logs/remote-service.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <encoder
+                class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <!-- 日志输出编码 -->
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n
+                </pattern>
+            </layout>
+        </encoder>
+        <!--日志文件最大的大小-->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>100MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+    
+     <logger name="com.yck.payment.common.log.RemoteService" level="info">
+        <appender-ref ref="REMOTESERVICE"/>
+    </logger>  
+    
+    <appender name="SMSSERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名-->
+            <FileNamePattern>logs/sms-service.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <encoder
+                class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <!-- 日志输出编码 -->
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n
+                </pattern>
+            </layout>
+        </encoder>
+        <!--日志文件最大的大小-->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>100MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+    
+     <logger name="com.yck.payment.common.log.SmsService" level="info">
+        <appender-ref ref="SMSSERVICE"/>
+    </logger>  
+    <!-- 日志规范 end-->
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>

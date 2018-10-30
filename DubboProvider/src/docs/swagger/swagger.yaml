@@ -1,0 +1,939 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: 银承库OpenAPI文档中心
+  description: |-
+    银承库平台对外接口规范定义，所有接口均按RESTful API规范定义
+
+    理财
+    此文档描述 app理财 端相关接口，全部接口以 *application/json* 格式返回
+    所有接口统一按HTTP verb 规定与服务器做交互：
+    + GET: 获取所有与接口有关的信息，参数通过 *path/param* 方式传递
+    + POST: 创建资源，此操作依赖于不同的接口定义，某此接口不需要提供此操作
+    + PUT: 更新资源信息，作用类似于SQL 中的 *update* 操作
+    + DELETE: 删除资源，此类接口需要谨慎定义及对外提供，用于删除相关资源的操作
+
+    此文档基于Swagger文档管理工具生成，关于Swagger更多信息见 [http://swagger.io](http://swagger.io)
+    或 [irc.freenode.net, #swagger](http://swagger.io/irc/)交流.
+     银承库平台对外接口规范定义，所有接口均按RESTful API规范定义
+
+    理财
+    此文档描述 app理财 端相关接口，全部接口以 *application/json* 格式返回
+    所有接口统一按HTTP verb 规定与服务器做交互：
+    + GET: 获取所有与接口有关的信息，参数通过 *path/param* 方式传递
+    + POST: 创建资源，此操作依赖于不同的接口定义，某此接口不需要提供此操作
+    + PUT: 更新资源信息，作用类似于SQL 中的 *update* 操作
+    + DELETE: 删除资源，此类接口需要谨慎定义及对外提供，用于删除相关资源的操作
+
+    此文档基于Swagger文档管理工具生成，关于Swagger更多信息见 [http://swagger.io](http://swagger.io)
+    或 [irc.freenode.net, #swagger](http://swagger.io/irc/)交流.
+host: rcx6maa9dabyb4jut.stoplight-proxy.io
+schemes:
+  - http
+paths:
+  /path:
+    get:
+      operationId: GET_path
+      summary: JSONP请求说明
+      description: |-
+        通用数据请求接口， 用来辅助某些不能通过正常 request/response形式发送请求的场景，如：
+         + JavaScript **跨域**请求 
+         + **Android OKHttp** 请求 
+         + 其他不能正常处理 **4xx/5xx** 等状态码的类库 
+
+         此定义适用于 适用于所有 适用于所有接口 ， 于 于用 于用 于用把 于用把接口 于用把接口返回  的 json  数据  数据转换  数据转换为 jsonp  数据  数据返回 （ HTTP  状态 状态码 **200**）
+         
+         *注： 此 jsonp  规范适用于所有类型的 HTTP Method*
+         
+          ## 使用说明 ：
+           在  请求 请求的 请求的 URL 请求的 URL 后面  附加 `?callback=<callbackname>` 参数  或`&callback=<callbackname>`， 此处 callbackname  可  可指定  可指定任意  可指定任意名称 ， 指定 指定的 指定的名称 指定的名称会 指定的名称会用于 指定的名称会用于返回 指定的名称会用于返回的 jsonp  数据  数据
+          在 在返回 在返回的 在返回的数据 类型 类型为 `application/javascript`
+
+        Response Body   示例 如下:
+        + 200
+          + HTTP Status Code: 200
+          + Response Body:
+        ```jsonp
+        callbackname({
+          "status_code": 200,
+          "data": {
+            "user_id": 1,
+            "user_name": "Jack",
+            "user_gender": 0
+          }
+        })
+        ```
+        + 404
+          + HTTP Status Code: 200
+          + Response Body:
+        ```jsonp
+        callbackname({
+          "status_code": 404,
+          "data": {
+            "errorcode": 1001,
+            "msg": "User Data cann't be found"
+          }
+        })
+        ```
+      produces:
+        - application/javascript
+      parameters:
+        - name: param
+          in: query
+          required: false
+          type: string
+        - name: callback
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/jsonpresponseentity'
+          examples:
+            application/javascript:
+              status_code: 200
+              msg: OK
+              data:
+                user_id: 1
+                user_name: Jack
+                user_gender: 0
+  '/accountservice/bankaccount/userid/{user_id}':
+    parameters:
+      - name: user_id
+        in: path
+        description: 用户 ID
+        required: true
+        type: integer
+    get:
+      operationId: GET_accountservice-bankaccount-userid-user_id
+      summary: 用户账户金额信息
+      tags:
+        - Accountservice
+      produces:
+        - application/json
+      parameters:
+        - name: user_token
+          in: header
+          description: user sign in token
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/WrappedBankAccountInfo'
+          examples:
+            application/json:
+              userId: 1
+              userName: 测试账户
+              accountAmount: 1230000.12
+              bankList:
+                - bankId: '102100002669'
+                  bankName: 中国工商银行股份有限公司北京房山支行二六六分理处
+                  bankType: 1
+                  validAmount: 1230000.12
+                  frozenAmount: 0.12
+                  payeeAccountNumber: '7186734148394832708'
+                  payeeAccountName: 北京xx公司
+        '401':
+          description: 此接口需要登录后操作
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 2005
+              msg: 当前用户未登录，登录后重新操作
+        '500':
+          description: Invalid request param value
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 1001
+              msg: 必要字段验证失败，请检查
+  '/accountservice/bankaccount/userid/{user_id}/bankid/{bank_id}':
+    parameters:
+      - name: user_id
+        in: path
+        description: 用户 ID
+        required: true
+        type: integer
+      - name: bank_id
+        in: path
+        description: 银行 ID
+        required: true
+        type: string
+    post:
+      operationId: POST_accountservice-bankaccount-userid-user_id-bankid-bank_id
+      summary: 开通银行账户
+      tags:
+        - Accountservice
+      description: 发送用户 ID 与银行联行号开通银行账户
+      produces:
+        - application/json
+      parameters:
+        - name: user_token
+          in: header
+          description: user sign in token
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserBankInfo'
+          examples:
+            application/json:
+              bankId: '102100002669'
+              bankName: 中信银行xx支行
+              payeeAccountNumber: '7186734148394832708'
+              payeeAccountName: 北京xx公司
+        '401':
+          description: 此接口需要登录后操作
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 2005
+              msg: 当前用户未登录，登录后重新操作
+        '409':
+          description: 订单已创建，请不要重复提交
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 3002
+              msg: 订单已创建，请不要重复提交
+        '500':
+          description: Invalid request param value
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 1001
+              msg: 必要字段验证失败，请检查
+  /accountservice/assets:
+    get:
+      operationId: getAllUserAssets
+      summary: 用户资产列表
+      tags:
+        - Accountservice
+      description: 用户已申购的资产列表
+      produces:
+        - application/json
+      parameters:
+        - name: user_id
+          in: query
+          description: 用户 ID
+          required: true
+          type: integer
+        - name: user_token
+          in: header
+          description: user sign in token
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserAssetsInfo'
+          examples:
+            application/json:
+              totalAmount: 1231123.12
+              todayIncome: 23.12
+              totalIncome: 1123.12
+              assetList:
+                - id: 1
+                  productName: ea
+                  productTags:
+                    - consequat labore U
+                  holdAmount: 1230000.12
+                  assetTodayIncome: 23.12
+                  assetTotalIncome: 1123.12
+        '401':
+          description: 此接口需要登录后操作
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 2005
+              msg: 当前用户未登录，登录后重新操作
+  /orderservice/order:
+    post:
+      operationId: confirmOrder
+      summary: 订单确认接口
+      tags:
+        - Orderservice
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: '#/definitions/OrderRequestBody'
+            example:
+              idempotent_token: eiusmod
+              user_id: -53917922
+              product_id: 6004228
+              product_type: -78971752
+              amount: -4228432
+              user_payment_password: in sed
+        - name: user_token
+          in: header
+          description: user sign in token
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/OrderEntity'
+          examples:
+            application/json:
+              orderNo: WO20161111100012
+              orderStatus: 0
+              userId: 1
+              productId: 1
+              productType: 1
+        '401':
+          description: 此接口需要登录后操作
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 2005
+              msg: 当前用户未登录，登录后重新操作
+        '404':
+          description: 订单不存在，无法确定订单
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 1003
+              msg: 订单确认失败，无法申购
+        '408':
+          description: 超过时间订单未确认，订单已取消
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: '3004,'
+              msg: 订单超过 5 分钟未处理，已取消
+        '409':
+          description: 订单已创建，请不要重复提交
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 3002
+              msg: 订单已创建，请不要重复提交
+        '500':
+          description: Invalid request param value
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 1001
+              msg: 必要字段验证失败，请检查
+  /orderservice/preorder:
+    post:
+      operationId: createPreOrder
+      summary: 产品预订购接口
+      tags:
+        - Orderservice
+      description: 产品预订购接口，返回唯一 idempotent_token，此 token 用作确认订单使用
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: '#/definitions/PreOrderRequestBody'
+            example:
+              user_id: -4658111
+              product_id: -63384115
+              product_type: -70885444
+              amount: -5076318
+        - name: user_token
+          in: header
+          description: user sign in token
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/PreOrderEntity'
+          examples:
+            application/json:
+              idempotentToken: xxx-xxx-xxx
+              productId: 1
+              productType: 1
+              userId: 1
+              amount: 100000.12
+        '401':
+          description: 此接口需要登录后操作
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 2005
+              msg: 当前用户未登录，登录后重新操作
+        '500':
+          description: "返回状态码可能由于以下原因导致: \n\r+ 2002: 用户余额不足，无法创建订单 \n\r+ 2003: 未开通银行账户 \n\r+ 3005: 资产不足，不能创建订单"
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: '2002,'
+              msg: 账户余额不足，创建订单失败
+  /orderservice/redeemorder:
+    post:
+      operationId: createRedeemOrder
+      summary: 理财产品赎回接口
+      tags:
+        - Orderservice
+      description: 创建赎回订单
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema:
+            type: object
+            properties:
+              user_id:
+                type: integer
+              product_id:
+                type: integer
+                description: Product which user purchased
+              redeem_amount:
+                type: number
+                description: Amount of redeem on selected product
+              user_payment_password:
+                type: string
+                description: Payment password with SHA1 encryption
+              sms_verify_code:
+                type: string
+                description: Code which the user binding phone received
+            required:
+              - user_id
+              - product_id
+              - redeem_amount
+              - user_payment_password
+              - sms_verify_code
+            example:
+              user_id: 1
+              product_id: 1
+              redeem_amount: 50000
+              user_payment_password: '123456'
+              sms_verify_code: '4754'
+        - name: user_token
+          in: header
+          required: true
+          type: string
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/OrderEntity'
+          examples:
+            application/json:
+              orderNo: WO2016111110001
+              orderStatus: 0
+              userId: 1
+              productId: 1
+              productType: 1
+        '401':
+          description: ''
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 2005
+              msg: 当前用户未登录，登录后重新操作
+        '409':
+          description: ''
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 3002
+              msg: 订单已创建，请不要重复提交
+        '500':
+          description: ''
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 1001
+              msg: 必要字段验证失败，请检查
+  '/productservice/product/id/{id}':
+    parameters:
+      - name: id
+        in: path
+        description: 产品ID
+        required: true
+        type: integer
+    get:
+      operationId: getProductDetailInfo
+      summary: 产品详情
+      tags:
+        - Productservice
+      description: 产品信息描述接口
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ProductInfoEntity'
+          examples:
+            application/json:
+              id: 1
+              productName: 承信活期1
+              productTags:
+                - 新手
+                - Lorem
+              productType: 1
+              annualizedRateOfReturn: 0.041
+              totalQuota: 1000000.12
+              remainQuota: 50000.12
+              commission: 0.12
+              description: laboris quis sunt proident
+              minInvestment: 50000.12
+              startDateOfSale: '1477965973874'
+              dueDateOfSale: '1480557973874'
+              startDateTypeOfReturn: 0
+              typeOfRedeem: 0
+              typeOfRedeemReceive: 0
+              validTimeRangePerDay:
+                startTimeOfDay: '1478822860649'
+                endTimeOfDay: '1478858860649'
+              urlList:
+                - urlName: 资产描述
+                  urlLink: 'http://baidu.com'
+                - urlName: 安全保障
+                  urlLink: 'http://bing.com'
+                - urlName: ' 其他说明'
+                  urlLink: 'http://qq.com'
+        '404':
+          description: Data Not Found
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 8772505
+              msg: Lorem proident consectetur anim fugiat
+  /productservice/products:
+    get:
+      operationId: getProductList
+      summary: 产品列表
+      tags:
+        - Productservice
+      description: 产品描述相关接口，如产品列表，产品信息等，与标的相关描述信息有关的接口
+      produces:
+        - application/json
+      parameters:
+        - name: type
+          in: query
+          description: '产品类型，1：活期 2：单票 '
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/WrappedProductEntity'
+          examples:
+            application/json:
+              productList:
+                - id: 1
+                  productName: 承信活期1
+                  productTags:
+                    - 新手
+                    - Lorem
+                  productType: 1
+                  annualizedRateOfReturn: 0.041
+                  totalQuota: 1000000.12
+                  remainQuota: 50000.12
+                - id: 2
+                  productName: 承信活期2
+                  productTags:
+                    - Lorem
+                  productType: 1
+                  annualizedRateOfReturn: 0.04
+                  totalQuota: 500000.12
+                  remainQuota: 250000.12
+        '404':
+          description: Data not found
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: -68716568
+              msg: dolore fugiat
+        '500':
+          description: Invalid request param value
+          schema:
+            $ref: '#/definitions/ErrorJSONEntity'
+          examples:
+            application/json:
+              errorcode: 1001
+              msg: 必要字段验证失败，请检查
+definitions:
+  WrappedProductEntity:
+    type: object
+    properties:
+      product_list:
+        type: array
+        description: 产品列表
+        items:
+          $ref: '#/definitions/ProductBrifEntity'
+  BankAccountInfo:
+    type: object
+    properties:
+      bank_id:
+        type: string
+        description: 支行联行号
+      bank_name:
+        type: string
+        description: xx 银行 xx 支行
+      bank_type:
+        type: integer
+        description: 银行类型
+      valid_amount:
+        type: number
+        description: 可用金额
+      frozen_amount:
+        type: number
+        description: 冻结金额
+      payee_account_number:
+        type: string
+        description: 用户银行账户号码
+      payee_account_name:
+        type: string
+        description: 用户自己的企业名称
+  PreOrderRequestBody:
+    type: object
+    properties:
+      user_id:
+        description: 用户id
+        type: integer
+      product_id:
+        description: 产品 ID
+        type: integer
+      product_type:
+        description: 产品所属类型ID，如：活期或定期
+        type: integer
+      amount:
+        description: 申购金额
+        type: number
+  OrderEntity:
+    type: object
+    properties:
+      order_no:
+        type: string
+        description: 订单编号
+      order_status:
+        type: integer
+        description: 订单状态 1：冻结，0：可用
+      user_id:
+        type: integer
+        description: 用户 ID
+      product_id:
+        type: integer
+        description: 产品 ID
+      product_type:
+        type: integer
+        description: 产品类型
+  PreOrderEntity:
+    type: object
+    properties:
+      idempotent_token:
+        type: string
+        description: 申购幂等校验token
+      product_id:
+        type: integer
+        description: 产品 ID
+      product_type:
+        type: integer
+        description: 产品类型
+      user_id:
+        type: integer
+        description: 用户 ID
+      amount:
+        type: number
+        description: 账户投资金额
+  ProductBrifEntity:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 产品 ID
+      product_name:
+        type: string
+        description: 产品名
+      product_tags:
+        type: array
+        description: 产品标签
+        items:
+          type: string
+      product_type:
+        type: integer
+        description: 产品类型，活期或定期等
+      annualized_rate_of_return:
+        type: number
+        format: float
+        description: 产品收益率
+      total_quota:
+        type: number
+        description: 总募集额度（元）
+      remain_quota:
+        type: number
+        description: 剩余额度（元）
+    required:
+      - id
+      - product_name
+      - product_tags
+      - product_type
+      - annualized_rate_of_return
+      - total_quota
+      - remain_quota
+  ValidTimeRangePerPay:
+    type: object
+    properties:
+      start_time_of_day:
+        type: string
+        description: 每日开始申购时间
+      end_time_of_day:
+        type: string
+        description: 每日终止申购时间
+  UserAssetsInfo:
+    type: object
+    properties:
+      total_amount:
+        type: number
+        description: 总额度
+      today_income:
+        type: number
+        description: 今日收益
+      total_income:
+        type: number
+        description: 总收益
+      asset_list:
+        type: array
+        description: 资产列表
+        items:
+          $ref: '#/definitions/UserAssetBrifInfo'
+    required:
+      - total_amount
+      - today_income
+      - total_income
+      - asset_list
+  WrappedBankAccountInfo:
+    type: object
+    properties:
+      user_id:
+        type: integer
+        description: 用户 ID
+      user_name:
+        type: string
+        description: 用户名
+      account_amount:
+        type: number
+        description: 用户账户剩余金额
+      bank_list:
+        type: array
+        items:
+          $ref: '#/definitions/BankAccountInfo'
+  ProductRelatedUrl:
+    type: object
+    properties:
+      url_name:
+        type: string
+        description: url name should be should on view
+      url_link:
+        type: string
+        description: the real url link
+  ErrorJSONEntity:
+    type: object
+    properties:
+      errorcode:
+        type: integer
+        description: 异常状态ID
+      msg:
+        type: string
+        description: 异常消息
+  ProductInfoEntity:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 产品 ID
+      product_name:
+        type: string
+        description: 产品名
+      product_tags:
+        type: array
+        description: 产品标签
+        items:
+          type: string
+      product_type:
+        type: integer
+        description: 产品类型，活期或定期等
+      annualized_rate_of_return:
+        type: number
+        format: float
+        description: 产品收益率
+      total_quota:
+        type: number
+        description: 总募集额度（元）
+      remain_quota:
+        type: number
+        description: 剩余额度（元）
+      commission:
+        type: number
+        format: float
+        description: 手续费比率
+      description:
+        type: string
+        description: 资产描述
+      min_investment:
+        type: number
+        description: 最小投资金额
+      start_date_of_sale:
+        type: string
+        description: 开售日期时间戳
+      due_date_of_sale:
+        type: string
+        description: 项目到期日时间戳
+      start_date_type_of_return:
+        type: integer
+        description: 开始计息类型， T+1 / T+2 / T+3
+      type_of_redeem:
+        type: integer
+        description: 赎回类型，0=> 随时赎回
+      type_of_redeem_receive:
+        type: integer
+        description: 到账类型，T+1 到账
+      valid_time_range_per_day:
+        $ref: '#/definitions/ValidTimeRangePerPay'
+      url_list:
+        type: array
+        items:
+          $ref: '#/definitions/ProductRelatedUrl'
+    required:
+      - id
+      - product_name
+      - product_tags
+      - annualized_rate_of_return
+      - total_quota
+      - remain_quota
+      - commission
+      - description
+      - min_investment
+      - start_date_of_sale
+      - due_date_of_sale
+      - start_date_type_of_return
+      - type_of_redeem
+      - type_of_redeem_receive
+      - valid_time_range_per_day
+      - url_list
+  UserAssetBrifInfo:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 用户所购买产品 ID
+      product_name:
+        type: string
+      product_tags:
+        type: array
+        description: 产品标签
+        items:
+          type: string
+      hold_amount:
+        type: number
+        description: 持有总额
+      asset_today_income:
+        type: number
+        description: 今日收益
+      asset_total_income:
+        type: number
+        description: 总收益
+    required:
+      - id
+      - product_name
+      - product_tags
+      - hold_amount
+      - asset_today_income
+      - asset_total_income
+  OrderRequestBody:
+    type: object
+    properties:
+      idempotent_token:
+        type: string
+        description: 申购幂等校验token
+      user_id:
+        type: integer
+        description: User ID
+      product_id:
+        type: integer
+        description: Product ID
+      product_type:
+        type: integer
+        description: 产品类型
+      amount:
+        type: number
+        description: 申购金额
+      user_payment_password:
+        type: string
+        description: Payment password with SHA1 encryption
+    required:
+      - idempotent_token
+      - user_id
+      - product_id
+      - product_type
+      - amount
+      - user_payment_password
+  UserBankInfo:
+    type: object
+    properties:
+      bank_id:
+        type: string
+        description: 支行联行号
+      bank_name:
+        type: string
+        description: xx 银行 xx 支行
+      payee_account_number:
+        type: string
+        description: 用户银行账户号码
+      payee_account_name:
+        type: string
+        description: 用户自己的企业名称
+  jsonpresponseentity:
+    type: object
+    properties:
+      status_code:
+        type: integer
+      data:
+        type: object
+    required:
+      - status_code
+      - data
+    example:
+      status_code: 200
+      msg: OK
+      data:
+        user_id: 1
+        user_name: Jack
+        user_gender: 1

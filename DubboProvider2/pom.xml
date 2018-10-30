@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <start-class>com.yck.payment.Swagger2SpringBoot</start-class>
+        <springfox-version>2.5.0</springfox-version>
+    </properties>
+
+	<modelVersion>4.0.0</modelVersion>
+
+    <artifactId>dubbo-provider2</artifactId>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>com.hyj.dubbo</groupId>
+        <artifactId>dubbo-platform</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <build>
+        <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>${start-class}</mainClass>
+                    <jvmArguments>-Dfile.encoding=UTF-8</jvmArguments>
+                    <layout>ZIP</layout>
+                </configuration>
+            </plugin>
+            
+            <!--   要将源码放上去，需要加入这个插件    -->
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal> 
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+		<!--SpringFox dependencies -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.governator</groupId>
+            <artifactId>governator-api</artifactId>
+            <version>1.12.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <!-- <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+        </dependency> -->
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+             <version>2.0.1.RELEASE</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency> 
+		    <groupId>net.sourceforge.htmlunit</groupId> 
+		    <artifactId>htmlunit-core-js</artifactId> 
+		    <version>2.9</version> 
+		    <scope>compile</scope> 
+		</dependency> 
+		<dependency> 
+		    <groupId>net.sourceforge.htmlunit</groupId> 
+		    <artifactId>htmlunit</artifactId> 
+		    <version>2.9</version> 
+		    <scope>compile</scope> 
+		</dependency>
+		
+		<dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>1.1.1</version>
+            <!-- <exclusions>
+            	<exclusion>
+            		<artifactId>spring-boot-starter-logging</artifactId>
+            		<groupId>org.springframework.boot</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>logback-classic</artifactId>
+            		<groupId>ch.qos.logback</groupId>
+            	</exclusion>
+            </exclusions> -->
+        </dependency>
+        <!-- mysql 驱动 -->
+       <!--  <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.38</version>
+        </dependency> -->
+        <!-- 数据库连接池 -->
+       <!--  <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.0.5</version>
+        </dependency> -->
+        <!--分页插件 -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+       <dependency>
+			<groupId>com.hyj.dubbo</groupId>
+			<artifactId>dubbo-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+    </dependencies>
+</project>

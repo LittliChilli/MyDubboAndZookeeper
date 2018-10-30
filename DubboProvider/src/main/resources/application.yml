@@ -1,0 +1,12 @@
+server:
+  port: 16003
+  contextPath: /console
+spring:
+  application:
+    name: paymentApi # lower case fo application name
+  mustache:
+    check-template-location: false
+
+logging:
+  path: ./logs
+  file: ./logs/console.log
